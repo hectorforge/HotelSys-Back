@@ -67,4 +67,9 @@ public class HabitacionController {
                 .map(habitacion -> ResponseEntity.ok(habitacion.getImagenes()))
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @PostMapping("/por-ids")
+    public ResponseEntity<List<Habitacion>> getHabitacionesPorIds(@RequestBody List<Integer> ids) {
+        return ResponseEntity.ok(habitacionService.getHabitacionesByIds(ids));
+    }
 }
