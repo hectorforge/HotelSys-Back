@@ -16,7 +16,7 @@ public class ImagenHabitacion {
     @Column(name = "url", nullable = false)
     private String url;
 
-    @Column(name = "alt", nullable = false)
+    @Column(name = "alt")
     private String alt;
 
     @Column(name = "descripcion")
