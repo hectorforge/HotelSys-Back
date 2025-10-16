@@ -21,12 +21,16 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
 
+    // Así solicita token, es decir, es seguro
+    // Pero el dibujito Pablito de los Backyardigans nos dijo que lo quitemos
+    // y resolvió...
+    // req.requestMatchers("/api/auth/**").permitAll()
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers("/api/auth/**").permitAll()
+                        req.requestMatchers("/api/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
