@@ -31,8 +31,7 @@ public class SecurityConfig {
         http.cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers("/api/auth/**").permitAll()
-                                .requestMatchers("/api/**").permitAll()
+                        req.requestMatchers("/api/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
@@ -46,9 +45,11 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // Orígenes permitidos
-        configuration.setAllowedOrigins(List.of("http://localhost:4200", "https://web.ees-peru.com"));
+
+           //configuration.setAllowedOrigins(List.of("http://localhost:4200", "https://web.ees-peru.com"));
         // Permitimos patrones para subdominios si se necesita
-        configuration.setAllowedOriginPatterns(List.of("https://*.ees-peru.com"));
+           //configuration.setAllowedOriginPatterns(List.of("https://*.ees-peru.com"));
+        configuration.addAllowedOriginPattern("*");
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
