@@ -28,6 +28,12 @@ public class ClienteController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    //NUEVO METODO AGREGADO PARA OBTENER ID CLIENTE
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Integer> getClienteByEmail(@PathVariable String email) {
+        return ResponseEntity.ok(clienteService.filtroIdClientePorEmail(email));
+    }
+
     @PostMapping
     public ResponseEntity<Cliente> createCliente(@RequestBody ClienteRequest clienteRequest) {
         return ResponseEntity.ok(clienteService.createCliente(clienteRequest));
