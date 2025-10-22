@@ -38,6 +38,40 @@ public class ReservaService {
         return reservaRepository.findById(id);
     }
 
+
+    public Optional<Reserva> cancelarReservaPorIdYEmail(Integer id, String email) {
+        Optional<Reserva> reservaOpt = reservaRepository.findById(id);
+
+        if (reservaOpt.isPresent()) {
+            Reserva reserva = reservaOpt.get();
+
+            // Validar que el email coincida con el cliente dueño
+            if (reserva.getCliente().getEmail().equalsIgnoreCase(email)) {
+                // Buscar el estado "Cancelada"
+                EstadoReserva estadoCancelada = estadoReservaRepository
+                        .findByDescripcionIgnoreCase("Cancelada")
+                        .orElseThrow(() -> new RuntimeException("Estado 'Cancelada' no encontrado"));
+
+                // Asignar el estado encontrado
+                reserva.setEstadoReserva(estadoCancelada);
+
+                // Desactivar la reserva
+                reserva.setActivo(false);
+
+                // Guardar la actualización
+                return Optional.of(reservaRepository.save(reserva));
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Reserva> getAllReservasByClienteEmail(String email) {
+        return reservaRepository.findByCliente_Email(email);
+    }
+
+
     @Transactional
     public Reserva createReserva(ReservaRequest reservaRequest) {
         Cliente cliente = clienteRepository.findById(reservaRequest.getClienteId())
