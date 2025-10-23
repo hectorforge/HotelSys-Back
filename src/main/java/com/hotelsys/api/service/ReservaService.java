@@ -58,7 +58,6 @@ public class ReservaService {
         if (!pendientes.isEmpty()) {
             System.out.println("Se confirmaron " + pendientes.size() + " reservas automáticamente.");
         }
-
     }
 
     @Transactional
