@@ -29,8 +29,8 @@ public class ClienteController {
     }
 
     //NUEVO METODO AGREGADO PARA OBTENER ID CLIENTE
-    @GetMapping("/email/{email}")
-    public ResponseEntity<Integer> getClienteByEmail(@PathVariable String email) {
+    @GetMapping("/email")
+    public ResponseEntity<Integer> getClienteByEmail(@RequestParam String email) {
         return ResponseEntity.ok(clienteService.filtroIdClientePorEmail(email));
     }
 
