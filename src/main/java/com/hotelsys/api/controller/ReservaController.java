@@ -7,9 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/reservas")
@@ -31,23 +30,13 @@ public class ReservaController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createReserva(@RequestBody ReservaRequest reservaRequest) {
+    public ResponseEntity<Reserva> createReserva(@RequestBody ReservaRequest reservaRequest) {
         try {
             Reserva nuevaReserva = reservaService.createReserva(reservaRequest);
             return ResponseEntity.ok(nuevaReserva);
         } catch (RuntimeException e) {
-            Map<String, Object> error = new HashMap<>();
-            error.put("mensaje", "Error al crear la reserva");
-            error.put("detalle", e.getMessage());
-            return ResponseEntity.badRequest().body(error);
+            return ResponseEntity.badRequest().build();
         }
-    }
-
-    @PatchMapping("/cancelar/{id}")
-    public ResponseEntity<Reserva> cancelarReserva(@PathVariable Integer id) {
-        return reservaService.deleteLogicoReserva(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
@@ -59,5 +48,31 @@ public class ReservaController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @PatchMapping("/cancelar/{id}")
+    public ResponseEntity<Reserva> cancelarReserva(@PathVariable Integer id) {
+        return reservaService.deleteLogicoReserva(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/{idRes}/cancelar/{emailCli:.+}")
+    public ResponseEntity<Reserva> cancelarReservaPorIdYEmail(
+            @PathVariable Integer idRes,
+            @PathVariable String emailCli) {
+
+        return reservaService.cancelarReservaPorIdYEmail(idRes, emailCli)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    //  por email
+    @GetMapping("/cliente")
+    public ResponseEntity<List<Reserva>> getAllReservasByClienteEmail(@RequestParam String email) {
+        List<Reserva> reservas = reservaService.getAllReservasByClienteEmail(email);
+        return reservas.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(reservas);
     }
 }

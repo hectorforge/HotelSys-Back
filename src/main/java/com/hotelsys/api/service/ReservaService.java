@@ -7,7 +7,6 @@ import com.hotelsys.api.model.catalogos.EstadoReserva;
 import com.hotelsys.api.model.entidades.*;
 import com.hotelsys.api.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,26 +38,39 @@ public class ReservaService {
         return reservaRepository.findById(id);
     }
 
-    //METODO PARA ACTULIZAR RESERVA AUTOMATICAMENTE
-    @Transactional
-    @Scheduled(fixedRate = 60000)
-    public void confirmarReservasPendientes(){
-        LocalDateTime limite = LocalDateTime.now().minusMinutes(5);
 
-        EstadoReserva estadoPendiente = estadoReservaRepository.findById(1).orElseThrow();
-        EstadoReserva estadoConfirmada = estadoReservaRepository.findById(2).orElseThrow();
+    public Optional<Reserva> cancelarReservaPorIdYEmail(Integer id, String email) {
+        Optional<Reserva> reservaOpt = reservaRepository.findById(id);
 
-        List<Reserva> pendientes = reservaRepository.findByEstadoReservaAndFechaReservaBefore(estadoPendiente, limite);
+        if (reservaOpt.isPresent()) {
+            Reserva reserva = reservaOpt.get();
 
-        for (Reserva reserva : pendientes) {
-            reserva.setEstadoReserva(estadoConfirmada);
-            reservaRepository.save(reserva);
+            // Validar que el email coincida con el cliente dueño
+            if (reserva.getCliente().getEmail().equalsIgnoreCase(email)) {
+                // Buscar el estado "Cancelada"
+                EstadoReserva estadoCancelada = estadoReservaRepository
+                        .findByDescripcionIgnoreCase("Cancelada")
+                        .orElseThrow(() -> new RuntimeException("Estado 'Cancelada' no encontrado"));
+
+                // Asignar el estado encontrado
+                reserva.setEstadoReserva(estadoCancelada);
+
+                // Desactivar la reserva
+                reserva.setActivo(false);
+
+                // Guardar la actualización
+                return Optional.of(reservaRepository.save(reserva));
+            }
         }
 
-        if (!pendientes.isEmpty()) {
-            System.out.println("Se confirmaron " + pendientes.size() + " reservas automáticamente.");
-        }
+        return Optional.empty();
     }
+
+    @Transactional(readOnly = true)
+    public List<Reserva> getAllReservasByClienteEmail(String email) {
+        return reservaRepository.findByCliente_Email(email);
+    }
+
 
     @Transactional
     public Reserva createReserva(ReservaRequest reservaRequest) {
