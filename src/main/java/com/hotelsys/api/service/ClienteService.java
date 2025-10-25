@@ -74,4 +74,9 @@ public class ClienteService {
             return clienteRepository.save(cliente);
         });
     }
+
+    public Integer filtroIdClientePorEmail(String email) {
+        Cliente cliente = clienteRepository.findByEmail(email);
+        return cliente.getId();
+    }
 }
