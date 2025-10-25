@@ -120,7 +120,7 @@ CREATE TABLE IF NOT EXISTS reserva_productos (
 CREATE TABLE IF NOT EXISTS imagenes_habitaciones (
   `id` INT NOT NULL AUTO_INCREMENT,
   `url` VARCHAR(255) NOT NULL,
-  `alt` VARCHAR(255) NOT NULL,
+  `alt` VARCHAR(255) NULL,
   `descripcion` VARCHAR(255) NULL,
   `orden` INT NULL,
   `habitacion_id` INT NOT NULL,

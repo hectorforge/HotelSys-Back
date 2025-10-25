@@ -86,4 +86,9 @@ public class HabitacionService {
             return habitacionRepository.save(habitacion);
         });
     }
+
+    @Transactional(readOnly = true)
+    public List<Habitacion> getHabitacionesByIds(List<Integer> ids) {
+        return habitacionRepository.findByIdIn(ids);
+    }
 }

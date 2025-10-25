@@ -17,4 +17,5 @@ public interface HabitacionRepository extends JpaRepository<Habitacion, Integer>
 
     List<Habitacion> findByActivoTrue();
     Optional<Habitacion> findByNumero(String numero);
+    List<Habitacion> findByIdIn(List<Integer> ids);
 }
