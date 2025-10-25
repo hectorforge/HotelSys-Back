@@ -2,6 +2,7 @@ package com.hotelsys.api.controller;
 
 import com.hotelsys.api.dto.HabitacionRequest;
 import com.hotelsys.api.model.entidades.Habitacion;
+import com.hotelsys.api.model.entidades.ImagenHabitacion;
 import com.hotelsys.api.service.HabitacionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -58,5 +59,17 @@ public class HabitacionController {
                 .filter(h -> h.getEstadoHabitacion().getId() == 1) // ID 1 = Disponible
                 .toList();
         return ResponseEntity.ok(disponibles);
+    }
+
+    @GetMapping("/{id}/imagenes")
+    public ResponseEntity<List<ImagenHabitacion>> getImagenesPorHabitacion(@PathVariable Integer id) {
+        return habitacionService.getHabitacionById(id)
+                .map(habitacion -> ResponseEntity.ok(habitacion.getImagenes()))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/por-ids")
+    public ResponseEntity<List<Habitacion>> getHabitacionesPorIds(@RequestBody List<Integer> ids) {
+        return ResponseEntity.ok(habitacionService.getHabitacionesByIds(ids));
     }
 }

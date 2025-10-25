@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reservas")
@@ -29,12 +31,15 @@ public class ReservaController {
     }
 
     @PostMapping
-    public ResponseEntity<Reserva> createReserva(@RequestBody ReservaRequest reservaRequest) {
+    public ResponseEntity<?> createReserva(@RequestBody ReservaRequest reservaRequest) {
         try {
             Reserva nuevaReserva = reservaService.createReserva(reservaRequest);
             return ResponseEntity.ok(nuevaReserva);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+            Map<String, Object> error = new HashMap<>();
+            error.put("mensaje", "Error al crear la reserva");
+            error.put("detalle", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
         }
     }
 
