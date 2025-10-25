@@ -31,7 +31,7 @@ public class SecurityConfig {
         http.cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers("/api/**").permitAll()
+                        req.requestMatchers("/api/**", "/img/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
