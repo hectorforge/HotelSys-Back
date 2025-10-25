@@ -39,8 +39,6 @@ public class ReservaController {
         }
     }
 
-
-
     @PutMapping("/{id}")
     public ResponseEntity<Reserva> updateReserva(@PathVariable Integer id, @RequestBody ReservaRequest reservaRequest) {
         try {
@@ -77,8 +75,4 @@ public class ReservaController {
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.ok(reservas);
     }
-
-
-
-
 }
