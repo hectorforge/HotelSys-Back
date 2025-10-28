@@ -7,6 +7,7 @@ import com.hotelsys.api.model.catalogos.EstadoReserva;
 import com.hotelsys.api.model.entidades.*;
 import com.hotelsys.api.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +39,25 @@ public class ReservaService {
         return reservaRepository.findById(id);
     }
 
+    @Transactional
+    @Scheduled(fixedRate = 60000)
+    public void confirmarReservasPedientes(){
+        LocalDateTime limite = LocalDateTime.now().minusMinutes(1);
+
+        EstadoReserva estadoPendiente = estadoReservaRepository.findById(1).orElseThrow();
+        EstadoReserva estadoConfirmada = estadoReservaRepository.findById(2).orElseThrow();
+
+        List<Reserva> pendientes = reservaRepository.findByEstadoReservaAndFechaReservaBefore(estadoPendiente, limite);
+
+        for(Reserva reserva : pendientes){
+            reserva.setEstadoReserva(estadoConfirmada);
+            reservaRepository.save(reserva);
+        }
+
+        if(!pendientes.isEmpty()){
+            System.out.println("Se confirmaron " + pendientes.size() + " reservas automaticamente");
+        }
+    }
 
     public Optional<Reserva> cancelarReservaPorIdYEmail(Integer id, String email) {
         Optional<Reserva> reservaOpt = reservaRepository.findById(id);
