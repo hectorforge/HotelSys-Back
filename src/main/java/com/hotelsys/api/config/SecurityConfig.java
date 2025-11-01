@@ -13,7 +13,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -47,18 +47,20 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(Arrays.asList(
-                "http://localhost:4200",
-                "https://web.ees-peru.com",
-                "http://192.168.18.63",
-                "null" // opcional: acepta origen "null" que usan algunos WebView / apps nativas
-        ));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("*"));
-        config.setAllowCredentials(true); // sólo si necesitas cookies/credenciales
+        CorsConfiguration configuration = new CorsConfiguration();
+        // Orígenes permitidos
+
+           //configuration.setAllowedOrigins(List.of("http://localhost:4200", "https://web.ees-peru.com"));
+        // Permitimos patrones para subdominios si se necesita
+           //configuration.setAllowedOriginPatterns(List.of("https://*.ees-peru.com"));
+        configuration.addAllowedOriginPattern("*");
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
+        // aplicar a todas las rutas (ajusta si quieres restringir)
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }
