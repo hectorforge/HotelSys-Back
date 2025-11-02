@@ -108,9 +108,9 @@ public class ReservaService {
             Habitacion habitacion = habitacionRepository.findById(habitacionId)
                     .orElseThrow(() -> new RuntimeException("Habitación no encontrada con ID: " + habitacionId));
 
-            if (!habitacion.getActivo() || habitacion.getEstadoHabitacion().getId() != 1) {
-                throw new RuntimeException("La habitación " + habitacion.getNumero() + " no está disponible.");
-            }
+//            if (!habitacion.getActivo() || habitacion.getEstadoHabitacion().getId() != 1) {
+//                throw new RuntimeException("La habitación " + habitacion.getNumero() + " no está disponible.");
+//            }
             habitacionesAReservar.add(habitacion);
             BigDecimal costoPorNoche = habitacion.getTipoHabitacion().getPrecioBaseNoche();
             montoTotalHabitaciones = montoTotalHabitaciones.add(costoPorNoche.multiply(new BigDecimal(noches)));
@@ -162,7 +162,7 @@ public class ReservaService {
                 .orElseThrow(() -> new RuntimeException("Estado 'Ocupada' no encontrado"));
 
         for (Habitacion hab : habitacionesAReservar) {
-            hab.setEstadoHabitacion(estadoOcupada);
+            // hab.setEstadoHabitacion(estadoOcupada);
             ReservaHabitacion detalle = new ReservaHabitacion();
             detalle.setHabitacion(hab);
             detalle.setPrecioNocheGrabado(hab.getTipoHabitacion().getPrecioBaseNoche());
